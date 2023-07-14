@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FITS Image Contrast Adjustment</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #333;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+        #myCanvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .slider {
+            width: 300px;
+            margin: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/astrojs/fitsjs@v0.2.2/fits.js"></script>
+</head>
+<body>
+    <h1>Adjust Image Contrast</h1>
+    <canvas id="myCanvas"></canvas>
+    <input type="range" min="0" max="2" value="1" step="0.01" class="slider" id="myRange">
+    
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var slider = document.getElementById('myRange');
+        var ctx = canvas.getContext('2d');
+        var imgData;
+        
+        function loadFITS(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'arraybuffer';
+            xhr.open('GET', url);
+            xhr.onload = function() {
+                var fits = new astro.FITS(xhr.response, function(){
+                    var dataUnit = this.getDataUnit();
+                    canvas.width = dataUnit.width;
+                    canvas.height = dataUnit.height;
+                    imgData = ctx.createImageData(dataUnit.width, dataUnit.height);
+                    imgData.data.set(dataUnit.frame.data);
+                    ctx.putImageData(imgData, 0, 0);
+                });
+            };
+            xhr.send();
+        }
+        
+        slider.oninput = function() {
+            var contrast = this.value;
+            var data = imgData.data;
+            for(var i = 0; i < data.length; i += 4) {
+                data[i] = data[i]*contrast;
+                data[i + 1] = data[i + 1]*contrast;
+                data[i + 2] = data[i + 2]*contrast;
+            }
+            ctx.putImageData(imgData, 0, 0);
+        }
+        
+        loadFITS("https://drive.google.com/file/d/1mzEgoZ2g89D7KRYKQEUylUj3FwN856T7/view?usp=sharing");
+    </script>
+</body>
+</html>
+
