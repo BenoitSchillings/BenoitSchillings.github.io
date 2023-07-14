@@ -33,7 +33,7 @@
 
         <script>
 
-	    var NROIS = 2;			// number of ROIS -- sufficient for code but not for html
+	    var NROIS = 0;			// number of ROIS -- sufficient for code but not for html
 	    var fits;				// FITS instance
 	    var last_mouse_loc;			// last-known mouse location, in FITS coords
 
@@ -52,21 +52,21 @@
 		fits.setStretch (gebi("stretch_sel").value);
 
 		// set the ROI control colors to match
-		for (var i = 1; i <= NROIS; i++)
-		    gebi('roi_label_'+i).style.background = fits.rois[i].color;
+		//for (var i = 1; i <= NROIS; i++)
+		//    gebi('roi_label_'+i).style.background = fits.rois[i].color;
 
 		// turn off all but highest prioroty ROI iniitially
-		for (var i = 1; i <= NROIS; i++) {
-		    var state = (i == NROIS);
-		    fits.enableROI (i, state);
-		    gebi("display_roi_"+i).checked = state;
-		}
+		//for (var i = 1; i <= NROIS; i++) {
+		//    var state = (i == NROIS);
+		//    fits.enableROI (i, state);
+		//    gebi("display_roi_"+i).checked = state;
+		//}
 
 		// add handler to report new mouse location
 		fits.addMouseHandler (onMouse);
 
 		// add handler to report new ROI
-		fits.addROIChangedHandler (onROIChange);
+		//fits.addROIChangedHandler (onROIChange);
 
 		// connect callback when user selects a local file to display
 		gebi ('filesel').addEventListener('change', handleLocalFileSelect, false);
@@ -149,40 +149,40 @@
 	    }
 
 	    // called when an ROI changes, roi is in image coords.
-	    function onROIChange (roi, redef, moved) {
-		var eid = gebi ('roiinfo_' + roi.z);
-		var title = roi.z == 0 ? "Image" : "ROI " + roi.z;
-		displayStats (eid, "black", title, roi);
-		fits.displayHistogram (roi, gebi ("roihcanvas_" + roi.z));
-	    }
+	    //function onROIChange (roi, redef, moved) {
+	    //	var eid = gebi ('roiinfo_' + roi.z);
+	    //	var title = roi.z == 0 ? "Image" : "ROI " + roi.z;
+	    //	displayStats (eid, "black", title, roi);
+	    //	fits.displayHistogram (roi, gebi ("roihcanvas_" + roi.z));
+	    //}
 
 	    // called when user turns an ROI on or off
 	    function onDisplayROI (roi_n) {
-		var cb = gebi("display_roi_"+roi_n);
-		fits.enableROI(roi_n, cb.checked);
+		//var cb = gebi("display_roi_"+roi_n);
+		//fits.enableROI(roi_n, cb.checked);
 	    }
 
 	    // display roi and stats in an orderly manner in given DOM id in given color.
 	    function displayStats (id, color, title, roi) {
-		var stats = roi.stats;
-		var fits_coords = fits.image2FITS(roi);
-		var minat_coords = fits.image2FITS(roi.stats.minat);
-		var maxat_coords = fits.image2FITS(roi.stats.maxat);
-		id.innerHTML =
-		    title + ": " + pad(roi.width,4) + " x " + pad(roi.height,5)
-		      + " @ [" + pad(fits_coords.x,5) + ", "
-		      + pad(fits_coords.y,5) + "]<br>"
-		    + "Min " + pad(stats.min.toFixed(1),11) + pad("",4)
-			+ " @ [" + pad(minat_coords.x.toFixed(0),5) + ", "
-			+ pad(minat_coords.y.toFixed(0),5) + "]<br>"
-		    + "Max " + pad(stats.max.toFixed(1),11) + pad("",4)
-			+ " @ [" + pad(maxat_coords.x.toFixed(0),5) + ", "
-			+ pad(maxat_coords.y.toFixed(0),5) + "]<br>"
-		    + "Mean " + pad(stats.mean.toFixed(1),10) + pad("",2)
-		        + "StdDev " + pad(stats.stddev.toFixed(1),12) + "<br>"
-		    + "Median " + pad(stats.median.toFixed(1),8) + pad("",1) 
-			+ " Sum " + pad(stats.sum.toFixed(1),15);
-		id.style.color = color;
+		//var stats = roi.stats;
+		//var fits_coords = fits.image2FITS(roi);
+		//var minat_coords = fits.image2FITS(roi.stats.minat);
+		//var maxat_coords = fits.image2FITS(roi.stats.maxat);
+		//id.innerHTML =
+		//    title + ": " + pad(roi.width,4) + " x " + pad(roi.height,5)
+		//      + " @ [" + pad(fits_coords.x,5) + ", "
+		//      + pad(fits_coords.y,5) + "]<br>"
+		//    + "Min " + pad(stats.min.toFixed(1),11) + pad("",4)
+		//	+ " @ [" + pad(minat_coords.x.toFixed(0),5) + ", "
+		//	+ pad(minat_coords.y.toFixed(0),5) + "]<br>"
+		//   + "Max " + pad(stats.max.toFixed(1),11) + pad("",4)
+		//	+ " @ [" + pad(maxat_coords.x.toFixed(0),5) + ", "
+		//	+ pad(maxat_coords.y.toFixed(0),5) + "]<br>"
+		//    + "Mean " + pad(stats.mean.toFixed(1),10) + pad("",2)
+		//        + "StdDev " + pad(stats.stddev.toFixed(1),12) + "<br>"
+		//    + "Median " + pad(stats.median.toFixed(1),8) + pad("",1) 
+		//	+ " Sum " + pad(stats.sum.toFixed(1),15);
+		//id.style.color = color;
 	    }
 
 	    // return s padded on left to n chars
@@ -298,91 +298,6 @@
 
 		    <!-- third column is ROI contrast controls -->
 
-		    <table class='thick-border' style='width:320px' >
-
-			<tr><td id='roi_label_2'>
-			    <table width='100%'>
-				<tr>
-				    <td width='50%'>
-					<input type='range' id='contrast_slider_2' min='0' max='100'
-						step='1' value='0' onkeydown='newContrast(event)'
-						onmousemove='newContrast(event)'
-					/>
-				    </td>
-				    <td width='25%'>
-					<label id='contrast_value_2' class='monospaced' >0</label>
-				    </td>
-				    <td width='25%'>
-					On:
-					<input id='display_roi_2' type='checkbox' onclick='onDisplayROI(2)'>
-					</input>
-				    </td>
-				</tr>
-			    </table>
-			</td></tr>
-
-			<tr><td class='thick-bottom' >
-			    <h4></h4>
-			    <table style='width:100%'>
-				<tr>
-				    <td>
-					<canvas title='histogram. black line: black pixel; magenta: median; green: mean; white: white pixel'
-					id='roihcanvas_2' style="width:280px;height:100px;position:relative">
-					</canvas>
-				    </td>
-				</tr>
-				<tr>
-				    <td>
-					<label id='roiinfo_2' class='monospaced' >
-					    <br><br><br><br><br>
-					</label>
-				    </td>
-				</tr>
-			    </table>
-			</td></tr>
-
-			<tr><td id='roi_label_1'>
-			    <table width='100%'>
-				<tr>
-				    <td width='50%'>
-					<input type='range' id='contrast_slider_1' min='0' max='100'
-						step='1' value='0' onkeydown='newContrast(event)'
-						onmousemove='newContrast(event)'
-					/>
-				    </td>
-				    <td width='25%'>
-					<label id='contrast_value_1' class='monospaced' >0</label>
-				    </td>
-				    <td width='25%'>
-					On:
-					<input id='display_roi_1' type='checkbox' onclick='onDisplayROI(1)'>
-					</input>
-				    </td>
-				</tr>
-			    </table>
-			</td></tr>
-
-			<tr><td>
-			    <h4></h4>
-			    <table style='width:100%'>
-				<tr>
-				    <td>
-					<canvas title='histogram. black line: black pixel; magenta: median; green: mean; white: white pixel'
-					id='roihcanvas_1' style="width:280px;height:100px;position:relative">
-					</canvas>
-				    </td>
-				</tr>
-				<tr>
-				    <td>
-					<label id='roiinfo_1' class='monospaced' >
-					    <br><br><br><br><br>
-					</label>
-				    </td>
-				</tr>
-			    </table>
-			</td></tr>
-
-		    </table>
 
 		</tr> </td>
 
